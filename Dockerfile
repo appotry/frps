@@ -11,13 +11,14 @@ RUN set -xe && \
     apk del tzdata
 
 RUN set -x && \
-	wget --no-check-certificate https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/frp_${FRP_VERSION}_linux_amd64.tar.gz && \ 
-	tar xzf frp_${FRP_VERSION}_linux_amd64.tar.gz && \
-	cd frp_${FRP_VERSION}_linux_amd64 && \
+	UNAME=$(uname -m) && if [ "$UNAME" = "x86_64" ]; then export PLATFORM=amd64 ; else export PLATFORM=arm64 ; fi && \
+	wget --no-check-certificate https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/frp_${FRP_VERSION}_linux_${PLATFORM}.tar.gz && \ 
+	tar xzf frp_${FRP_VERSION}_linux_${PLATFORM}.tar.gz && \
+	cd frp_${FRP_VERSION}_linux_${PLATFORM} && \
 	mkdir /frp && \
 	mv frps frps.ini /frp && \
 	cd .. && \
-	rm -rf *.tar.gz frp_${FRP_VERSION}_linux_amd64
+	rm -rf *.tar.gz frp_${FRP_VERSION}_linux_${PLATFORM}
 
 VOLUME /frp
 
